@@ -1,48 +1,48 @@
 /************************************************** 
-  Name    : "products.controller.js"
+  Name    : "users.controller.js"
   Version : "0.1.0"
-  Descripcion : "API Básica Productos"
+  Descripcion : "API Básica Usuarios"
   Objetivo : "Almacenamiento de datos en el 
               repositorio"
   ------------------------------------------------
   "documentacion": {
-    "titulo": "CRUD REST FULL API para Productos"
-    "url"   : "http://localhost:3000/products/api/"
+    "titulo": "CRUD REST FULL API para usuarios"
+    "url"   : "http://localhost:3000/users/api/"
     "repositorio": MySQL
     "Archivo" : panaderia
-    "Tabla"   : productos
-    "Campos"  : id_prod, desc_prod, cant_prod, prec_prod
+    "Tabla"   : users
+    "Campos"  : id, name, email, password
     "Autorización" : NO
+  }
  **************************************************   
 */
 import { pool } from "../database.js";
 import respuestas from "../libs/respuestas.js";
-
 /** 
- * "Nombre" : createProduct 
- * "url"    : "http://localhost:3000/products/api/"
+ * "Nombre" : createUser 
+ * "url"    : "http://localhost:3000/user/api/"
  * "Metodo" : "POST"
  * "Acción" : "Agregar un registro"
- * "Tabla"  : "Productos"
+ * "Tabla"  : "Users"
  * -----------------------------------------------
  * "parametros" : ninguno
  * "retorno OK" : Status 201 / 
- *                objeto json id, desc, cant, prec
+ *                objeto json id, name, email, password
  * "retorno Error": Status 500
  * -----------------------------------------------
  */
-export const createProduct = async (req, res) => {
+export const createUser = async (req, res) => {
     try {
-        const { desc, cant, prec } = req.body;
-        const [rows] = await pool.query("INSERT INTO productos (desc_prod, cant_prod, prec_prod) VALUES (?, ?, ?)", [desc, cant, prec]);
-        res.status(201).json({ id: rows.insertId, desc, cant, prec});        
+        const { name, email, passsword } = req.body;
+        const [rows] = await pool.query("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", [desc, cant, prec]);
+        res.status(201).json({ id: rows.insertId, name, email, password});        
     } catch (error) {
         //return res.status(500).json({ message: "Algo salió mal!" });
         return respuestas.error(req, res, "Algo Salió mal! :(", 500);
     }
 };
 /** 
- * "Nombre" : getProducts 
+ * "Nombre" : getUsers 
  * "url"    : "http://localhost:3000/products/api/"
  * "Metodo" : "GET"
  * "Acción" : "Obtener todos los registros"
@@ -54,35 +54,35 @@ export const createProduct = async (req, res) => {
  * "retorno Error": Status 500
  * -----------------------------------------------
  */
-export const getProducts = async (req, res) => {
+export const getUsers = async (req, res) => {
     try {
-        const [rows] = await pool.query("SELECT * FROM productos");
+        const [rows] = await pool.query("SELECT * FROM users");
         res.json(rows);
     } catch (error) {
         return respuestas.error(req, res, "Algo Salió mal! :(", 500);
     }
 };
 /** 
- * "Nombre" : getProductById 
- * "url"    : "http://localhost:3000/products/api/id"
+ * "Nombre" : getUserById 
+ * "url"    : "http://localhost:3000/users/api/id"
  * "Metodo" : "GET"
  * "Acción" : "Obtener un registro"
- * "Tabla"  : "Productos"
+ * "Tabla"  : "User"
  * -----------------------------------------------
  * "parametros" : id
  * "retorno OK" : Status 200 / 
- *                objeto json id, desc, cant, prec
+ *                objeto json id, name, email, password
  * "retorno Error": Status 404
  * -----------------------------------------------
  */
-export const getProductById = async (req, res) => {
+export const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
         console.log(req.params)
-        const [rows] = await pool.query("SELECT * FROM productos WHERE id_prod = ?", [id]);
+        const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
         if (rows.length <= 0) {
             //return res.status(404).json({ message: "Producto no Encontrado!" });
-            return respuestas.error(req, res, "Producto No encontrado!", 404);
+            return respuestas.error(req, res, "Usuario No encontrado!", 404);
         }
         res.json(rows[0]);
     } catch (error) {
@@ -90,48 +90,48 @@ export const getProductById = async (req, res) => {
     }
 };
 /** 
- * "Nombre" : updateProductById 
- * "url"    : "http://localhost:3000/products/api/id"
+ * "Nombre" : updateUserById 
+ * "url"    : "http://localhost:3000/user/api/id"
  * "Metodo" : "PUT"
  * "Acción" : "Actualizar un registro"
- * "Tabla"  : "Productos"
+ * "Tabla"  : "users"
  * -----------------------------------------------
- * "parametros" : id, desc, cant, prec
+ * "parametros" : id, name, email, password
  * "retorno OK" : Status 200 / 
- *                objeto json id, desc, cant, prec
+ *                objeto json id, name, email, password
  * "retorno Error": Status 404 / Status 500
  * -----------------------------------------------
  */
-export const updateProductById = async (req, res) => {
+export const updateUserById = async (req, res) => {
     try {
         const { id } = req.params;
-        const { desc, cant, prec } = req.body;
-        const [result] = await pool.query("UPDATE productos SET desc_prod = IFNULL(?, desc_prod), cant_prod = IFNULL(?, cant_prod), prec_prod = IFNULL(?, prec_prod) WHERE id_prod = ?", [desc, cant, prec, id]);
+        const { name, email, password } = req.body;
+        const [result] = await pool.query("UPDATE users SET name = IFNULL(?, name), email = IFNULL(?, email), password = IFNULL(?, password) WHERE id = ?", [name, email, password, id]);
         if (result.affectedRows === 0)
-            return respuestas.error(req, res, "Producto No encontrado!", 404);
-        const [rows] = await pool.query("SELECT * FROM productos WHERE id_prod = ?", [id]);   res.json(rows[0]);
+            return respuestas.error(req, res, "Usuario No encontrado!", 404);
+        const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);   res.json(rows[0]);
     } catch (error) {
         return respuestas.error(req, res, "Algo Salió mal! :(", 500);
     }
-}
+};
 /** 
- * "Nombre" : deleteProductById 
- * "url"    : "http://localhost:3000/products/api/id"
+ * "Nombre" : deleteUserById 
+ * "url"    : "http://localhost:3000/users/api/id"
  * "Metodo" : "DELETE"
  * "Acción" : "Eliminar un registro"
- * "Tabla"  : "Productos"
+ * "Tabla"  : "users"
  * -----------------------------------------------
  * "parametros" : id
  * "retorno OK" : Status 200                   
  * "retorno Error": Status 404 /  Status 500
  * -----------------------------------------------
  */
-export const deleteProductById = async (req, res) => {
+export const deleteUserById = async (req, res) => {
     try {
         const { id } = req.params;
-        const [rows] = await pool.query("DELETE FROM productos WHERE id_prod = ?", [id]);
+        const [rows] = await pool.query("DELETE FROM users WHERE id = ?", [id]);
         if (rows.affectedRows <= 0) {
-            return respuestas.error(req, res, "Producto No encontrado!", 404);
+            return respuestas.error(req, res, "Usuario No encontrado!", 404);
         }
         res.sendStatus(204);
     } catch (error) {
