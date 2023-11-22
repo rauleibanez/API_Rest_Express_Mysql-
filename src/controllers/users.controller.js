@@ -20,30 +20,29 @@ import { pool } from "../database.js";
 import respuestas from "../libs/respuestas.js";
 /** 
  * "Nombre" : createUser 
- * "url"    : "http://localhost:3000/user/api/"
+ * "url"    : "http://localhost:3000/users/api/"
  * "Metodo" : "POST"
  * "Acción" : "Agregar un registro"
  * "Tabla"  : "Users"
  * -----------------------------------------------
  * "parametros" : ninguno
  * "retorno OK" : Status 201 / 
- *                objeto json id, name, email, password
+ *                objeto json id, name, email, activo, fecha_creacion
  * "retorno Error": Status 500
  * -----------------------------------------------
  */
 export const createUser = async (req, res) => {
     try {
-        const { name, email, passsword } = req.body;
-        const [rows] = await pool.query("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", [desc, cant, prec]);
-        res.status(201).json({ id: rows.insertId, name, email, password});        
-    } catch (error) {
-        //return res.status(500).json({ message: "Algo salió mal!" });
+        const { nom_user, email_user, act_user, rol } = req.body;
+        const [rows] = await pool.query("INSERT INTO usuarios (nom_user, email_user, act_user, rol) VALUES (?, ?, ?, ? )", [nom_user, email_user, act_user, rol]);
+        res.status(201).json({ id: rows.insertId, nom_user, email_user, act_user, rol});        
+    } catch (error) {        
         return respuestas.error(req, res, "Algo Salió mal! :(", 500);
     }
 };
 /** 
  * "Nombre" : getUsers 
- * "url"    : "http://localhost:3000/products/api/"
+ * "url"    : "http://localhost:3000/users/api/"
  * "Metodo" : "GET"
  * "Acción" : "Obtener todos los registros"
  * "Tabla"  : "Productos"
@@ -56,7 +55,7 @@ export const createUser = async (req, res) => {
  */
 export const getUsers = async (req, res) => {
     try {
-        const [rows] = await pool.query("SELECT * FROM users");
+        const [rows] = await pool.query("SELECT * FROM usuarios");
         res.json(rows);
     } catch (error) {
         return respuestas.error(req, res, "Algo Salió mal! :(", 500);
@@ -79,7 +78,7 @@ export const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
         console.log(req.params)
-        const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);
+        const [rows] = await pool.query("SELECT * FROM usuarios WHERE id_user = ?", [id]);
         if (rows.length <= 0) {
             //return res.status(404).json({ message: "Producto no Encontrado!" });
             return respuestas.error(req, res, "Usuario No encontrado!", 404);
@@ -105,11 +104,11 @@ export const getUserById = async (req, res) => {
 export const updateUserById = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, email, password } = req.body;
-        const [result] = await pool.query("UPDATE users SET name = IFNULL(?, name), email = IFNULL(?, email), password = IFNULL(?, password) WHERE id = ?", [name, email, password, id]);
+        const { nom_user, email_user, act_user, rol } = req.body;
+        const [result] = await pool.query("UPDATE usuarios SET nom_user = IFNULL(?, nom_user), email_user = IFNULL(?, email_user), act_user = IFNULL(?, act_user), rol = IFNULL(?, rol) WHERE id_prod = ?", [nom_user, email_user, act_user, rol, id]);
         if (result.affectedRows === 0)
             return respuestas.error(req, res, "Usuario No encontrado!", 404);
-        const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [id]);   res.json(rows[0]);
+        const [rows] = await pool.query("SELECT * FROM usuarios WHERE id_prod = ?", [id]);   res.json(rows[0]);
     } catch (error) {
         return respuestas.error(req, res, "Algo Salió mal! :(", 500);
     }
@@ -129,7 +128,7 @@ export const updateUserById = async (req, res) => {
 export const deleteUserById = async (req, res) => {
     try {
         const { id } = req.params;
-        const [rows] = await pool.query("DELETE FROM users WHERE id = ?", [id]);
+        const [rows] = await pool.query("DELETE FROM usuarios WHERE id_prod = ?", [id]);
         if (rows.affectedRows <= 0) {
             return respuestas.error(req, res, "Usuario No encontrado!", 404);
         }
