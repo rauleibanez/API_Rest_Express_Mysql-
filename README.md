@@ -1,6 +1,6 @@
 # API Rest Express MySQL
 
-_BackEnd_ de la aplicacion para control de clientes utilizando JWT
+Version API REST _BackEnd_ de la aplicacion de **Panaderia** 
 
 | BackEnd | Repositorio de Datos |
 |-|-|
@@ -13,12 +13,14 @@ Paqueteria Utilizada
 | Paquete | Versión |
 |-|-| 
 | bcryptjs | ^2.4.3 |
-| body-parser | ^1.20.2 |
 | cors | ^2.8.5 |
+| dotenv | ^16.3.1 |
 | express | ^4.18.2 |
+| helmet | ^7.1.0 |
 | jsonwebtoken | ^9.0.2 |
-| mysql | ^2.18.1 |
-
+| morgan | ^1.10.0 |
+| mysql2 | ^3.6.3 |
+    
 ---
 
 |Raúl Ibáñez M.|
